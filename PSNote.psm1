@@ -1,5 +1,5 @@
-Import-Module Read-Menu
 Import-Module ModuleData
+Import-Module Read-Menu
 
 [PSObject]$ModuleData = (ModuleData -ScriptRoot $PSScriptRoot -FileName 'notes')
 $Data = $ModuleData.FileContent
@@ -13,7 +13,7 @@ function Note([string]$Parameter, [switch]$Info, [switch]$Edit) {
 
     if ($Edit) { Start-Process -FilePath $ModuleData.FilePath; return }
 
-    $action = Read-Menu -MenuTitle 'PSNote' -Options ('Categories', 'Add category') -ExitOption 'Exit' -CleanUpAfter
+    $action = Read-Menu -Header 'PSNote' -Options ('Categories', 'Add category') -ExitOption 'Exit' -CleanUpAfter
 
     switch ($action) {
         'Add category' {
@@ -31,7 +31,7 @@ function Note([string]$Parameter, [switch]$Info, [switch]$Edit) {
 }
 
 function Add-Category {
-    $newCategoryName = Read-Input -MenuTitle 'New category' -Instruction 'Enter new category name' -CleanUpAfter
+    $newCategoryName = Read-Input -Header 'New category' -Instruction 'Enter new category name' -CleanUpAfter
 
     $ModuleData.SetValue(($newCategoryName), @{})
     $ModuleData.Save()
@@ -42,10 +42,9 @@ function Add-Category {
 function Open-CategoryMenu {
     $categoryOptions = @($Data.PSObject.Properties.Name) + 'Add new category'
 
-    $category = Read-Menu -MenuTitle 'Select note category' -Options $categoryOptions -ExitOption 'Exit' -CleanUpAfter
+    $category = Read-Menu -Header 'Select note category' -Options $categoryOptions -ExitOption 'Exit' -CleanUpAfter
 
     switch ($category) {
-
         'Exit' {
             return
         }
@@ -64,12 +63,12 @@ function Open-NoteMenu([string]$Category) {
 
     $noteOptions += ('Add new note', 'All')
 
-    $note = Read-Menu -MenuTitle "$category notes" -Options $noteOptions -ExitOption 'Exit' -CleanUpAfter
+    $note = Read-Menu -Header "$category notes" -Options $noteOptions -ExitOption 'Exit' -CleanUpAfter
 
     switch ($note) {
         'Add new note' {
-            $newNoteName = Read-Input -Title 'New note' -Instruction 'Enter note name' -CleanUpAfter
-            $newNoteContent = Read-Input -Title 'New note' -Instruction 'Enter note content' -CleanUpAfter
+            $newNoteName = Read-Input -Header 'New note' -Instruction 'Enter note name' -CleanUpAfter
+            $newNoteContent = Read-Input -Header 'New note' -Instruction 'Enter note content' -CleanUpAfter
 
             $ModuleData.SetValue(@($category, $newNoteName), $newNoteContent)
 
@@ -90,7 +89,7 @@ function Open-NoteMenu([string]$Category) {
             $noteContent = $Data.$category.$note
 
             Write-MenuTitle -MenuTitle "$($category): $note"
-            
+
             Write-Host $noteContent`n -ForegroundColor Cyan
         }
     }
