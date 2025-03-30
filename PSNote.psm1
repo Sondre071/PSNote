@@ -13,11 +13,11 @@ function Note([string]$Parameter, [switch]$Info, [switch]$Edit) {
 
     if ($Edit) { Start-Process -FilePath $ModuleData.FilePath; return }
 
-    $action = Read-Menu -MenuTitle 'PSNote' -Options ('Categories', 'Add category') ($Data.Categories.PSObject.Properties.Name) -ExitOption 'Exit' -CleanUpAfter
+    $action = Read-Menu -MenuTitle 'PSNote' -Options ('Categories', 'Add category') -ExitOption 'Exit' -CleanUpAfter
 
     switch ($action) {
         'Add category' {
-            Add-CategoryMenu
+            Add-Category
         }
 
         default {
@@ -31,7 +31,7 @@ function Note([string]$Parameter, [switch]$Info, [switch]$Edit) {
 }
 
 function Add-Category {
-    $newCategoryName = Read-Input -Title 'New category' -Instruction 'Enter new category name' -CleanUpAfter
+    $newCategoryName = Read-Input -MenuTitle 'New category' -Instruction 'Enter new category name' -CleanUpAfter
 
     $ModuleData.SetValue(($newCategoryName), @{})
     $ModuleData.Save()
@@ -40,7 +40,9 @@ function Add-Category {
 }
 
 function Open-CategoryMenu {
-    $category = Read-Menu -MenuTitle 'Select note category' -Options $Data.PSObject.Properties.Name -ExitOption 'Exit' -CleanUpAfter
+    $categoryOptions = @($Data.PSObject.Properties.Name) + 'Add new category'
+
+    $category = Read-Menu -MenuTitle 'Select note category' -Options $categoryOptions -ExitOption 'Exit' -CleanUpAfter
 
     switch ($category) {
 
@@ -55,10 +57,16 @@ function Open-CategoryMenu {
 }
 
 function Open-NoteMenu([string]$Category) {
-    $note = Read-Menu -MenuTitle "$category notes" -FirstOptions ('Add new note') -Options $Data.$category.PSObject.Properties.Name -LastOptions ('All') -ExitOption 'Exit' -CleanUpAfter
+    $currentCategory = $Data.$Category.PSObject.Properties.Name
+    $noteOptions = @()
+
+    if ($currentCategory) { $noteOptions += $currentCategory}
+
+    $noteOptions += ('Add new note', 'All')
+
+    $note = Read-Menu -MenuTitle "$category notes" -Options $noteOptions -ExitOption 'Exit' -CleanUpAfter
 
     switch ($note) {
-
         'Add new note' {
             $newNoteName = Read-Input -Title 'New note' -Instruction 'Enter note name' -CleanUpAfter
             $newNoteContent = Read-Input -Title 'New note' -Instruction 'Enter note content' -CleanUpAfter
@@ -81,8 +89,8 @@ function Open-NoteMenu([string]$Category) {
         default {
             $noteContent = $Data.$category.$note
 
-            Write-MenuTitle -Title "$($category): $note" -TitleWidth 40
-
+            Write-MenuTitle -MenuTitle "$($category): $note"
+            
             Write-Host $noteContent`n -ForegroundColor Cyan
         }
     }
