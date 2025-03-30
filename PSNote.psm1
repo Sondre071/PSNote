@@ -1,8 +1,8 @@
-Import-Module ModuleData
+Import-Module PSModuleManager
 Import-Module Read-Menu
 
-[PSObject]$ModuleData = (ModuleData -ScriptRoot $PSScriptRoot -FileName 'notes')
-$Data = $ModuleData.FileContent
+[PSObject]$NoteManager = (PSModuleManager -ScriptRoot $PSScriptRoot -FileName 'notes')
+$Notes = $NoteManager.FileContent
 
 function Note([string]$Parameter, [switch]$Info, [switch]$Edit) {
 
@@ -11,7 +11,7 @@ function Note([string]$Parameter, [switch]$Info, [switch]$Edit) {
         return
     }
 
-    if ($Edit) { Start-Process -FilePath $ModuleData.FilePath; return }
+    if ($Edit) { Start-Process -FilePath $NoteManager.FilePath; return }
 
     $action = Read-Menu -Header 'PSNote' -Options ('Categories', 'Add category') -ExitOption 'Exit' -CleanUpAfter
 
@@ -33,14 +33,13 @@ function Note([string]$Parameter, [switch]$Info, [switch]$Edit) {
 function Add-Category {
     $newCategoryName = Read-Input -Header 'New category' -Instruction 'Enter new category name' -CleanUpAfter
 
-    $ModuleData.SetValue(($newCategoryName), @{})
-    $ModuleData.Save()
+    $NoteManager.Set(($newCategoryName), @{})
             
     Write-Host "Added new PSNote category: $newCategoryName."`n -ForegroundColor Green        
 }
 
 function Open-CategoryMenu {
-    $categoryOptions = @($Data.PSObject.Properties.Name) + 'Add new category'
+    $categoryOptions = ($Notes.PSObject.Properties.Name) + 'Add new category'
 
     $category = Read-Menu -Header 'Select note category' -Options $categoryOptions -ExitOption 'Exit' -CleanUpAfter
 
@@ -56,7 +55,7 @@ function Open-CategoryMenu {
 }
 
 function Open-NoteMenu([string]$Category) {
-    $currentCategory = $Data.$Category.PSObject.Properties.Name
+    $currentCategory = $Notes.$Category.PSObject.Properties.Name
     $noteOptions = @()
 
     if ($currentCategory) { $noteOptions += $currentCategory}
@@ -70,7 +69,7 @@ function Open-NoteMenu([string]$Category) {
             $newNoteName = Read-Input -Header 'New note' -Instruction 'Enter note name' -CleanUpAfter
             $newNoteContent = Read-Input -Header 'New note' -Instruction 'Enter note content' -CleanUpAfter
 
-            $ModuleData.SetValue(@($category, $newNoteName), $newNoteContent)
+            $NoteManager.Set(@($category, $newNoteName), $newNoteContent)
 
             Write-Host "$newNoteName saved."`n -ForegroundColor Cyan
         }
@@ -80,15 +79,15 @@ function Open-NoteMenu([string]$Category) {
         }
 
         'All' {
-            $Data.Categories.$category.PSObject.Properties | ForEach-Object {
+            $Notes.$category.PSObject.Properties | ForEach-Object {
                 Write-Host $_.Name -ForegroundColor Cyan
             }
         }
 
         default {
-            $noteContent = $Data.$category.$note
+            $noteContent = $Notes.$category.$note
 
-            Write-MenuTitle -MenuTitle "$($category): $note"
+            Write-MenuHeader -Header "$($category): $note"
 
             Write-Host $noteContent`n -ForegroundColor Cyan
         }
