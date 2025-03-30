@@ -11,9 +11,11 @@ function Note([string]$Parameter, [switch]$Info) {
     switch ($action) {
         'Add category' {
             $newCategoryName = Read-Input -Title 'New category' -Instruction 'Enter new category name' -CleanUpAfter
+
             $ModuleData.SetValue(($newCategoryName), @{})
             $ModuleData.Save()
-            Write-Host "Added new PSNote category $newCategoryName."`n -ForegroundColor Yellow
+            
+            Write-Host "Added new PSNote category: $newCategoryName."`n -ForegroundColor Green        
         }
 
         default {
@@ -25,17 +27,17 @@ function Note([string]$Parameter, [switch]$Info) {
                 }
 
                 default {
-                    $note = Read-Menu -MenuTitle 'Select note' -FirstOptions ('Add new note') -Options $Data.$category.PSObject.Properties.Name -ExitOption 'Exit' -LastOptions ('All') -CleanUpAfter
+                    $note = Read-Menu -MenuTitle "$category notes" -FirstOptions ('Add new note') -Options $Data.$category.PSObject.Properties.Name -ExitOption 'Exit' -LastOptions ('All') -CleanUpAfter
 
                     switch ($note) {
 
                         'Add new note' {
-                            $newNoteName = Read-Input -Title 'New note' -Instruction 'Enter new note name' -CleanUpAfter
-                            $newNoteContent = Read-Input -Title 'New note' -Instructon 'Enter note content' -CleanUpAfter
+                            $newNoteName = Read-Input -Title 'New note' -Instruction 'Enter note name' -CleanUpAfter
+                            $newNoteContent = Read-Input -Title 'New note' -Instruction 'Enter note content' -CleanUpAfter
 
                             $ModuleData.SetValue(@($category, $newNoteName), $newNoteContent)
 
-                            Write-Host "Set note $newNoteName"`n -ForegroundColor Yellow
+                            Write-Host "$newNoteName saved."`n -ForegroundColor Cyan
                         }
 
                         'Exit' {
@@ -44,26 +46,23 @@ function Note([string]$Parameter, [switch]$Info) {
 
                         'All' {
                             $Data.Categories.$category.PSObject.Properties | ForEach-Object {
-                                Write-Host $_.Name -ForegroundColor Yellow
+                                Write-Host $_.Name -ForegroundColor Cyan
                             }
                         }
+
                         default {
                             $noteContent = $Data.$category.$note
 
-                            Write-Host
-                            Write-MenuTitle -Title "PSMenu: $note" -TitleWidth 40
+                            Write-MenuTitle -Title "$($category): $note" -TitleWidth 40
 
-                            Write-Host $noteContent`n -ForegroundColor Yellow
+                            Write-Host $noteContent`n -ForegroundColor Cyan
                         }
                     }
                 }
             }
-
-
         }
         
         'Exit' {
-            Write-Host
             return
         }
     }
