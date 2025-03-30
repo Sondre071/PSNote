@@ -18,5 +18,5 @@
 - You may update your notes collection manually in a text editor by invoking `PSNote -Edit`.
 
 ## Viewing notes
-- Navigate the menu using arrows ← ↑ → ↓, esc and enter
+- Navigate the menu using arrows ↑↓, esc and enter
 - Vim bindings also work: JKLQ
