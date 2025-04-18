@@ -24,9 +24,7 @@ function Note([string]$Parameter, [switch]$Info, [switch]$Edit) {
             Open-CategoryMenu
         }
         
-        'Exit' {
-            return
-        }
+        'Exit' { return }
     }
 }
 
@@ -44,13 +42,11 @@ function Open-CategoryMenu {
     $category = Read-Menu -Header 'Select note category' -Options $categoryOptions -ExitOption 'Exit' -CleanUpAfter
 
     switch ($category) {
-        'Exit' {
-            return
-        }
-
         default {
             Open-NoteMenu -Category $category
         }
+
+        'Exit' { return }
     }
 }
 
@@ -58,7 +54,7 @@ function Open-NoteMenu([string]$Category) {
     $currentCategory = $Notes.$Category.PSObject.Properties.Name
     $noteOptions = @()
 
-    if ($currentCategory) { $noteOptions += $currentCategory}
+    if ($currentCategory) { $noteOptions += $currentCategory }
 
     $noteOptions += ('Add new note', 'All')
 
@@ -74,10 +70,6 @@ function Open-NoteMenu([string]$Category) {
             Write-Host "$newNoteName saved."`n -ForegroundColor Cyan
         }
 
-        'Exit' {
-            return
-        }
-
         'All' {
             $Notes.$category.PSObject.Properties | ForEach-Object {
                 Write-Host $_.Name -ForegroundColor Cyan
@@ -91,6 +83,8 @@ function Open-NoteMenu([string]$Category) {
 
             Write-Host $noteContent`n -ForegroundColor Cyan
         }
+
+        'Exit' { return }
     }
 }
 
