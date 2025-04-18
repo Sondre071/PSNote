@@ -8,14 +8,14 @@
 ### Dependencies
 - Requires the following modules of mine:
   - [Read-Menu](https://github.com/Sondre071/Read-Menu)
-  - [ModuleData](https://github.com/Sondre071/ModuleData)
+  - [PSModuleManager](https://github.com/Sondre071/PSModuleManager)
 
 ## Usage
-- Invoke the module with the keywords `PSNote` or `Note`.
+- Invoke the module with the keyword `Note`.
 
 ## Setting and updating notes
-- The module has basic functionality for adding and changing notes, but it is a work in progress.
-- You may update your notes collection manually in a text editor by invoking `PSNote -Edit`.
+- The module has basic functionality for adding and changing notes, it is a work in progress.
+- You may update your notes collection manually in a text editor by invoking `Note -Edit`.
 
 ## Viewing notes
 - Navigate the menu using arrows ↑↓, esc and enter
