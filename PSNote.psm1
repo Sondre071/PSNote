@@ -13,18 +13,21 @@ function Note([string]$Parameter, [switch]$Info, [switch]$Edit) {
 
     if ($Edit) { Start-Process -FilePath $NoteManager.FilePath; return }
 
-    $action = Read-Menu -Header 'PSNote' -Options ('Categories', 'Add category') -ExitOption 'Exit' -CleanUpAfter
+    while ($true) {
 
-    switch ($action) {
-        'Add category' {
-            Add-Category
-        }
+        $action = Read-Menu -Header 'PSNote' -Options ('Categories', 'Add category') -ExitOption 'Exit' -CleanUpAfter
 
-        default {
-            Open-CategoryMenu
-        }
+        switch ($action) {
+            'Add category' {
+                Add-Category
+            }
+
+            default {
+                Open-CategoryMenu
+            }
         
-        'Exit' { return }
+            'Exit' { return }
+        }
     }
 }
 
@@ -37,16 +40,17 @@ function Add-Category {
 }
 
 function Open-CategoryMenu {
-    $categoryOptions = ($Notes.PSObject.Properties.Name) + 'Add new category'
+    $categoryOptions = ($Notes.PSObject.Properties.Name)
 
-    $category = Read-Menu -Header 'Select note category' -Options $categoryOptions -ExitOption 'Exit' -CleanUpAfter
+    $category = Read-Menu -Header 'Select note category' -Options $categoryOptions -ExitOption 'Back' -CleanUpAfter
 
     switch ($category) {
         default {
             Open-NoteMenu -Category $category
+            break
         }
 
-        'Exit' { return }
+        'Back' { return }
     }
 }
 
