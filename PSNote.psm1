@@ -15,7 +15,7 @@ function Note([string]$Parameter, [switch]$Info, [switch]$Edit) {
 
     while ($true) {
 
-        $action = Read-Menu -Header 'PSNote' -Options ('Categories', 'Add category') -ExitOption 'Exit' -CleanUpAfter
+        $action = Read-Menu -Header 'PSNote' -Options ('Categories', 'Add category') -ExitOption 'Exit'
 
         switch ($action) {
             'Add category' {
@@ -32,7 +32,7 @@ function Note([string]$Parameter, [switch]$Info, [switch]$Edit) {
 }
 
 function Add-Category {
-    $newCategoryName = Read-Input -Header 'New category' -Instruction 'Enter new category name' -CleanUpAfter
+    $newCategoryName = Read-Input -Header 'New category' -Instruction 'Enter new category name'
 
     $NoteManager.Set(($newCategoryName), @{})
             
@@ -42,7 +42,7 @@ function Add-Category {
 function Open-CategoryMenu {
     $categoryOptions = ($Notes.PSObject.Properties.Name)
 
-    $category = Read-Menu -Header 'Select note category' -Options $categoryOptions -ExitOption 'Back' -CleanUpAfter
+    $category = Read-Menu -Header 'Select note category' -Options $categoryOptions -ExitOption 'Back'
 
     switch ($category) {
         default {
@@ -62,12 +62,12 @@ function Open-NoteMenu([string]$Category) {
 
     $noteOptions += ('Add new note', 'All')
 
-    $note = Read-Menu -Header "$category notes" -Options $noteOptions -ExitOption 'Exit' -CleanUpAfter
+    $note = Read-Menu -Header "$category notes" -Options $noteOptions -ExitOption 'Exit'
 
     switch ($note) {
         'Add new note' {
-            $newNoteName = Read-Input -Header 'New note' -Instruction 'Enter note name' -CleanUpAfter
-            $newNoteContent = Read-Input -Header 'New note' -Instruction 'Enter note content' -CleanUpAfter
+            $newNoteName = Read-Input -Header 'New note' -Instruction 'Enter note name'
+            $newNoteContent = Read-Input -Header 'New note' -Instruction 'Enter note content'
 
             $NoteManager.Set(@($category, $newNoteName), $newNoteContent)
 
