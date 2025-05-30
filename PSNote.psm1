@@ -85,7 +85,10 @@ function Open-NoteMenu([string]$Category) {
 
             Write-MenuHeader -Header "$($category): $note"
 
-            Write-Host $noteContent`n -ForegroundColor Cyan
+            foreach ($noteLine in $noteContent) {
+                Write-Host $noteLine -ForegroundColor Cyan
+
+            }
         }
 
         'Exit' { return }
